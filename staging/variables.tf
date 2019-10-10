@@ -27,3 +27,8 @@ variable "public_subnet_cidr" {
 variable "private_subnet_cidr" {
   description = "The CIDR block of the private subnet"
 }
+
+# Web servers
+variable "web_instance_count" {
+  description = "Total number of web server instances to create"
+}
