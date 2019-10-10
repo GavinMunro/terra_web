@@ -3,7 +3,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
-  tags {
+  tags = {
     Name        = "${var.environment}-vpc"
     Environment = "${var.environment}"
   }
@@ -13,7 +13,7 @@ resource "aws_vpc" "vpc" {
 resource "aws_internet_gateway" "ig" {
   vpc_id = "${aws_vpc.vpc.id}"
 
-  tags {
+  tags = {
     Name        = "${var.environment}-igw"
     Environment = "${var.environment}"
   }
@@ -38,7 +38,7 @@ resource "aws_subnet" "public_subnet" {
   availability_zone       = "${var.availability_zone}"
   map_public_ip_on_launch = true
 
-  tags {
+  tags = {
     Name        = "${var.environment}-public-subnet"
     Environment = "${var.environment}"
   }
@@ -51,7 +51,7 @@ resource "aws_subnet" "private_subnet" {
   map_public_ip_on_launch = false
   availability_zone       = "${var.availability_zone}"
 
-  tags {
+  tags = {
     Name        = "${var.environment}-private-subnet"
     Environment = "${var.environment}"
   }
@@ -61,7 +61,7 @@ resource "aws_subnet" "private_subnet" {
 resource "aws_route_table" "private" {
   vpc_id = "${aws_vpc.vpc.id}"
 
-  tags {
+  tags = {
     Name        = "${var.environment}-private-route-table"
     Environment = "${var.environment}"
   }
@@ -71,7 +71,7 @@ resource "aws_route_table" "private" {
 resource "aws_route_table" "public" {
   vpc_id = "${aws_vpc.vpc.id}"
 
-  tags {
+  tags = {
     Name        = "${var.environment}-public-route-table"
     Environment = "${var.environment}"
   }
@@ -120,7 +120,7 @@ resource "aws_security_group" "default" {
     self      = "true"
   }
 
-  tags {
+  tags = {
     Environment = "${var.environment}"
   }
 }
@@ -151,7 +151,7 @@ resource "aws_security_group" "bastion" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags {
+  tags = {
     Name        = "${var.environment}-bastion-sg"
     Environment = "${var.environment}"
   }
@@ -166,7 +166,7 @@ resource "aws_instance" "bastion" {
   subnet_id                   = "${aws_subnet.public_subnet.id}"
   associate_public_ip_address = true
 
-  tags {
+  tags = {
     Name        = "${var.environment}-bastion"
     Environment = "${var.environment}"
   }
