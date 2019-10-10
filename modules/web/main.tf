@@ -98,7 +98,7 @@ resource "aws_elb" "web" {
     lb_port           = 80
     lb_protocol       = "http"
   }
-  instances = ["${aws_instance.web.*.id}"]
+  instances = "${aws_instance.web.*.id}"
 
   tags = {
     Environment = "${var.environment}"
