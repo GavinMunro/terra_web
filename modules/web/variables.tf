@@ -1,6 +1,10 @@
 variable "web_instance_count" {
   description = "The total of web instances to run"
 }
+//
+//variable "instance_id" {
+//  description = "The total of web instances to run"
+//}
 
 variable "region" {
   description = "The region to launch the instances"
