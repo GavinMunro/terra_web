@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "aws_key_pair" "key" {
   key_name   = "${var.key_name}"
-  public_key = "${file("~/.aws/aws_terraform.pub")}"  #"aws_terraform.pub"
+  public_key = "${file("~/.aws/aws_terraform.pub")}"  # ToDo: parametrize this
 }
 
 # The aws_access_key_id and aws_secret_access_key must be obtained from
