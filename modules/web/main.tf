@@ -79,11 +79,28 @@ resource "aws_instance" "web" {
     "${aws_security_group.web_server_sg.id}"
   ]
   key_name          = "${var.key_name}"
-  user_data         = "${file("${path.module}/files/user_data.sh")}"
   tags = {
     Name        = "${var.environment}-web-${count.index+1}"
     Environment = "${var.environment}"
+    /* Instance    = ["${aws_instance.web[count.index].host_id}"]
+      cyclic dependency   */
   }
+
+  provisioner "local-exec" {
+    command = "echo Hello, World from EC2: ${self.id}"
+  }
+
+  /*  user_data  =  "${file("${path.module}/files/user_data.sh")}"   */
+  user_data = <<-EOF
+              #!/bin/bash
+              apt-get update -y
+              apt-get install -y nginx > /var/nginx.log
+              cd /var/www/html      # This nginx install defaults to serving from here
+              sudo touch index.html    # This will take precedence over the existing index.nignx-debian.html
+              sudo chmod o+w index.html   # slightly insecure, in prod we'd lock down file permissions better
+              echo "Hello, World from EC2: " >> index.html
+              EOF
+
 }
 
 /* Load Balancer */

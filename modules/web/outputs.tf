@@ -4,5 +4,4 @@ output "elb_hostname" {
 
 output "instance_ids" {
   value = "${aws_instance.web.*.id}"
-        /* aws_instance.web[count.index].id  */
 }
