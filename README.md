@@ -21,4 +21,4 @@
     This code assumes that a key-pair for access to your AWS account has been installed at the default path:
     ~/.aws/aws_terraform.pub
     
-    Once cloned from GitHub, run 'terraform apply' from the 'staging' subdirectory.
+    Once cloned from GitHub, run 'terraform apply' from the 'staging' subdirectory. Then browse to the output ELB hostname. Sometimes it is necessary to run apply twice if Nginx has yet to create the target filepath /var/www/index.html in the web servers.
