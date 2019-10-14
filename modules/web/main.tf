@@ -128,13 +128,16 @@ resource "null_resource" "instance_tags" {
      remote-exec provisioner within the aws_instance block could be used to append
      the instance id's to each index.html file using a ${self.id} ref. */
 
+  depends_on = ["aws_instance.web"]
+
   /* count      = "${var.web_instance_count}"  */
   /* The dynamic behaviour for_each, new in 0.12, is not supported for inline blocks */
 
   provisioner "remote-exec" {
     inline = [
-      "sudo echo ${aws_instance.web[0].id} >> /var/www/html/index.html",
-      "sleep 10"
+      "sleep 20",
+      "sudo echo ${aws_instance.web[0].id} >> /var/www/html/index.html"
+
     ]
     connection {
       type = "ssh"
@@ -152,8 +155,8 @@ resource "null_resource" "instance_tags" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo echo ${aws_instance.web[1].id} >> /var/www/html/index.html",
-      "sleep 10"
+      "sleep 20",
+      "sudo echo ${aws_instance.web[1].id} >> /var/www/html/index.html"
     ]
     connection {
       type = "ssh"
