@@ -83,7 +83,9 @@ resource "aws_instance" "web" {
     Name        = "${var.environment}-web-${count.index+1}"
     Environment = "${var.environment}"
     /* Instance    = ["${aws_instance.web[count.index].host_id}"]
-      cyclic dependency   */
+       cyclic dependency   */
+    associate_public_ip_address = true
+
   }
 
   provisioner "local-exec" {
@@ -100,7 +102,6 @@ resource "aws_instance" "web" {
               sudo chmod o+w index.html   # slightly insecure, in prod we'd lock down file permissions better
               echo "Hello, World from EC2: " >> index.html
               EOF
-
 }
 
 /* Load Balancer */
@@ -120,4 +121,52 @@ resource "aws_elb" "web" {
   tags = {
     Environment = "${var.environment}"
   }
+}
+
+resource "null_resource" "instance_tags" {
+  /* Connecting through the bastion requires aws_elb to have finished.  Otherwise a
+     remote-exec provisioner within the aws_instance block could be used to append
+     the instance id's to each index.html file using a ${self.id} ref. */
+
+  /* count      = "${var.web_instance_count}"  */
+  /* The dynamic behaviour for_each, new in 0.12, is not supported for inline blocks */
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo echo ${aws_instance.web[0].id} >> /var/www/html/index.html",
+      "sleep 10"
+    ]
+    connection {
+      type = "ssh"
+      agent = true
+      user = "ubuntu"
+      host = "${aws_instance.web[0].private_ip}"
+      //host_key = "${file("~/.aws/aws_terraform.pub")}"
+      private_key = "${file("~/.aws/aws_terraform")}"
+      bastion_user = "ubuntu"
+      bastion_host = "${var.bastion_ip}"
+      bastion_host_key = "${file("~/.aws/aws_terraform.pub")}"
+      bastion_private_key = "${file("~/.aws/aws_terraform")}"
+    }
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo echo ${aws_instance.web[1].id} >> /var/www/html/index.html",
+      "sleep 10"
+    ]
+    connection {
+      type = "ssh"
+      agent = true
+      user = "ubuntu"
+      host = "${aws_instance.web[1].private_ip}"
+      //host_key = "${file("~/.aws/aws_terraform.pub")}"
+      private_key = "${file("~/.aws/aws_terraform")}"
+      bastion_user = "ubuntu"
+      bastion_host = "${var.bastion_ip}"
+      bastion_host_key = "${file("~/.aws/aws_terraform.pub")}"
+      bastion_private_key = "${file("~/.aws/aws_terraform")}"
+    }
+  }
+
 }

@@ -16,3 +16,9 @@
 
     Ansible 0.12
     
+**Setup**
+    
+    This code assumes that a key-pair for access to your AWS account has been installed at the default path:
+    ~/.aws/aws_terraform.pub
+    
+    Once cloned from GitHub, run 'terraform apply' from the 'staging' subdirectory.
